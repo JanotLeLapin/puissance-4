@@ -31,6 +31,9 @@ def affiche_puissance_4():
 
 
 def joue_pion(joueur: int, colonne: int):
+    if board[0][colonne] != 0:
+        print("Colonne pleine")
+        return
     for i in range(5, -1, -1):
         if board[i][colonne] == 0:
             board[i][colonne] = joueur
