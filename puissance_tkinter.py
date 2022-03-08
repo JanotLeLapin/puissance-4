@@ -8,7 +8,7 @@ L = 500  # Window width and height
 CL = L  # Canvas width and height
 
 # Create table
-niggas = [[0 for _ in range(W)] for _ in range(H)]  # WxH size table
+tab = [[0 for _ in range(W)] for _ in range(H)]  # WxH size table
 
 # Create window
 win = Tk()
@@ -27,7 +27,7 @@ c.pack()
 
 
 def horizontal(player: int):
-    for line in niggas:
+    for line in tab:
         for i in range(4):
             if line[i] == player and line[i] == line[i+1] and line[i] == line[i+2] and line[i] == line[i+3]:
                 return True
@@ -37,7 +37,7 @@ def horizontal(player: int):
 def vertical(player: int):
     for i in range(6):
         for j in range(3):
-            if niggas[j][i] == player and niggas[j][i] == niggas[j+1][i] and niggas[j][i] == niggas[j+2][i] and niggas[j][i] == niggas[j+3][i]:
+            if tab[j][i] == player and tab[j][i] == tab[j+1][i] and tab[j][i] == tab[j+2][i] and tab[j][i] == tab[j+3][i]:
                 return True
     return False
 
@@ -45,7 +45,7 @@ def vertical(player: int):
 def diagonal_left(player: int):
     for i in range(3, 6):
         for j in range(4):
-            if niggas[i][j] == player and niggas[i][j] == niggas[i-1][j+1] and niggas[i][j] == niggas[i-2][j+2] and niggas[i][j] == niggas[i-3][j+3]:
+            if tab[i][j] == player and tab[i][j] == tab[i-1][j+1] and tab[i][j] == tab[i-2][j+2] and tab[i][j] == tab[i-3][j+3]:
                 return True
     return False
 
@@ -53,7 +53,7 @@ def diagonal_left(player: int):
 def diagonal_right(player: int):
     for i in range(3):
         for j in range(4):
-            if niggas[i][j] == player and niggas[i][j] == niggas[i+1][j+1] and niggas[i][j] == niggas[i+2][j+2] and niggas[i][j] == niggas[i+3][j+3]:
+            if tab[i][j] == player and tab[i][j] == tab[i+1][j+1] and tab[i][j] == tab[i+2][j+2] and tab[i][j] == tab[i+3][j+3]:
                 return True
     return False
 
@@ -66,21 +66,46 @@ def play(player: int, col: int) -> bool:
     for y in range(H - 1, -1, -1):
         if y < 0:
             return False
-        if niggas[y][col] == 0:
-            niggas[y][col] = player
+        if tab[y][col] == 0:
+            tab[y][col] = player
             draw()
             return True
 
 
 def ai_play():
-    col = random.randint(0, W - 1)
-    play(2, col)
+    moves = []
+    for y in range(H):
+        for x in range(W):
+            if tab[y][x] == 2:
+                moves.append((x, y))
+
+    move = (0, random.randint(0, W - 1))
+    for m in moves:
+        n = 0
+        for i in range(4):
+            for y in range(-1, 1):
+                for x in range(-1, 1):
+                    if x == 0 and y == 0:
+                        continue
+
+                    if y < 0 or y > H - 1 or x < 0 or x > W - 1:
+                        continue
+
+                    try:
+                        if tab[(y + m[1]) * i][(x + m[0]) * i]:
+                            n += 1
+                    except:
+                        continue
+        if n > move[0]:
+            move = (n, m[0])
+
+    play(2, move[1])
 
 
 def draw():
     for y in range(H):
         for x in range(W):
-            v = niggas[y][x]
+            v = tab[y][x]
             c.create_oval(
                 x*(CL/W),
                 y*(CL/H),
