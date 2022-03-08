@@ -96,7 +96,7 @@ def key_press(event):
         win.destroy()
 
     code = event.keycode
-    if code >= 49 and code <= 57:
+    if code >= 49 and code < 57:
         play(1, code - 49)
     else:
         return
